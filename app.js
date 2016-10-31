@@ -31,6 +31,16 @@ dialog.matches('identity', function(session) {
     session.send("I am a SPRING bot");
 });
 
+dialog.matches('hello', function(session) {
+    session.send("Hello! Ask me about myself.");
+});
+
+dialog.matches('swear', function(session) {
+    session.send("That is not very nice of you...");
+});
+
+dialog.onDefault(builder.DialogAction.send("I'm sorry. I didn't understand."));
+
 //bot.dialog('/', function (session) {
 //    session.send("Hello World");
 //});
