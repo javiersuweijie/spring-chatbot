@@ -16,13 +16,21 @@ var connector = new builder.ChatConnector({
     appId: "342c7e9b-3404-46ba-8d58-5872c248b2ae",
     appPassword: "YuOe4L3ZdOPU0vwkdNAcWHV"
 });
+var model = 'https://api.projectoxford.ai/luis/v1/application?id=45e40ce1-29d7-42cb-9c11-5785f9eefbd4&subscription-key=8f04842c92b84e25940c3fa2cea35472'
+var recognizer = new builder.LuisRecognizer(model);
 var bot = new builder.UniversalBot(connector);
+var dialog = new builder.IntentDialog({ recognizers: [recognizer] });
+bot.dialog('/', dialog);
 server.post('/api/messages', connector.listen());
 
 //=========================================================
 // Bots Dialogs
 //=========================================================
 
-bot.dialog('/', function (session) {
-    session.send("Hello World");
+dialog.matches('identity', function(session) {
+    session.send("I am a SPRING bot");
 });
+
+//bot.dialog('/', function (session) {
+//    session.send("Hello World");
+//});
