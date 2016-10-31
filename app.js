@@ -39,6 +39,12 @@ dialog.matches('swear', function(session) {
     session.send("That is not very nice of you...");
 });
 
+dialog.matches('find_industry', function(session, args) {
+    var industry = builder.EntityRecognizer.findEntity(args.entities, 'industry');
+    console.log(industry);
+    session.send("Searching for %s", industry.entity);
+});
+
 dialog.onDefault(builder.DialogAction.send("I'm sorry. I didn't understand."));
 
 //bot.dialog('/', function (session) {
