@@ -16,7 +16,7 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 
 //// Setup asteroid to update database
 var asteroid = new Asteroid({
-    endpoint: 'ws://localhost:3000/websocket',
+    endpoint: 'ws://128.199.65.211:3000/websocket',
     SocketConstructor: ws
 });
 
