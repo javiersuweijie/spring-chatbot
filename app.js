@@ -13,8 +13,8 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 
 // Create chat bot
 var connector = new builder.ChatConnector({
-    appId: "342c7e9b-3404-46ba-8d58-5872c248b2ae",
-    appPassword: "YuOe4L3ZdOPU0vwkdNAcWHV"
+    appId: "c20ed0f2-619f-4eeb-b121-770a070574b6",
+    appPassword: "N269inrXkenPWcqAqnitMRs"
 });
 var model = 'https://api.projectoxford.ai/luis/v1/application?id=45e40ce1-29d7-42cb-9c11-5785f9eefbd4&subscription-key=8f04842c92b84e25940c3fa2cea35472'
 var recognizer = new builder.LuisRecognizer(model);
