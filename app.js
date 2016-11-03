@@ -9,7 +9,8 @@ var ws = require('ws');
 //
 //// Setup Restify Server
 var server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
+//server.listen(process.env.port || process.env.PORT || 3978, function () {
+server.listen(3978, function () {
     console.log('%s listening to %s', server.name, server.url); 
 });
 
@@ -52,6 +53,18 @@ dialog.matches('find_industry', function(session, args) {
     console.log(industry);
     session.send("Searching for %s", industry.entity);
     asteroid.call('createCompany', "new company");
+});
+
+dialog.matches('add_company', function(session, args) {
+    var industry = builder.EntityRecognizer.findEntity(args.entities, 'company_name');
+    console.log(industry);
+    if (industry != null) {
+        session.send("Searching for %s", industry.entity);
+        asteroid.call('createCompany', industry.entity);
+    }
+    else {
+        session.send("Adding company but cannot find name");
+    }
 });
 
 dialog.onDefault(builder.DialogAction.send("I'm sorry. I didn't understand."));
