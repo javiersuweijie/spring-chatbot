@@ -39,20 +39,27 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/profile', [
         function (session) {
-            builder.Prompts.text(session, 'Hi! What is your name?');
+            builder.Prompts.text(session, 'Are you an investor or a business?');
         },
         function (session, results) {
-            session.userData.name = results.response;
-            session.endDialog();
+            if (results.response === 'investor' || results.response === 'business') {
+                session.userData.type = results.response;
+                session.send("%s huh?", results.response);
+                if (session.userData.type == 'investor')
+                    session.send("Cool - are you looking for potential investees, or would you like me to share the latest news?");
+                else
+                    session.send("Cool okay businesssss");
+                session.endDialog();
+            }
+            else {
+                session.send("Come again?");
+            }
         }
 ]);
 
-dialog.matches('identity', function(session) {
-    session.send("I am a SPRING bot");
-});
-
 dialog.matches('hello', function(session) {
-    session.send("Hello! Ask me about myself.");
+    session.send("Hi, I’m Olivia! If you're an investor, I can help you find potential investees. If you’re a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
+    session.beginDialog('/profile');
 });
 
 dialog.matches('swear', function(session) {
