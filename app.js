@@ -36,6 +36,17 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
+
+bot.dialog('/profile', [
+        function (session) {
+            builder.Prompts.text(session, 'Hi! What is your name?');
+        },
+        function (session, results) {
+            session.userData.name = results.response;
+            session.endDialog();
+        }
+]);
+
 dialog.matches('identity', function(session) {
     session.send("I am a SPRING bot");
 });
@@ -67,7 +78,9 @@ dialog.matches('add_company', function(session, args) {
     }
 });
 
-dialog.onDefault(builder.DialogAction.send("I'm sorry. I didn't understand."));
+dialog.onDefault(function(session, args) {
+    session.beginDialog('/profile');
+});
 
 //bot.dialog('/', function (session) {
 //    session.send("Hello World");
