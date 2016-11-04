@@ -52,10 +52,17 @@ bot.dialog('/profile', [
                 session.endDialog();
             }
             else {
-                session.send("Come again?");
+                //builder.Prompts.text(session, "Come again?");
+                session.send("Come again?")
+//                next({ resumed: builder.ResumeReason.back });
+                session.replaceDialog('/profile');
             }
         }
 ]);
+
+dialog.matches(/what am i\?/, function(session){
+    session.send("%s",session.userData.type);
+});
 
 dialog.matches('hello', function(session) {
     session.send("Hi, I’m Olivia! If you're an investor, I can help you find potential investees. If you’re a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
