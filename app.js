@@ -83,7 +83,10 @@ bot.dialog('/profile', [
                 session.endDialog();
             }
             else {
-                session.send("Come again?");
+                //builder.Prompts.text(session, "Come again?");
+                session.send("Come again?")
+//                next({ resumed: builder.ResumeReason.back });
+                session.replaceDialog('/profile');
             }
         }
 ]);
@@ -102,6 +105,10 @@ dialog.matches(/\/login_info/, function(session) {
     else {
         session.send("You are not logged in yet")
     }
+});
+
+dialog.matches(/what am i\?/, function(session){
+    session.send("%s",session.userData.type);
 });
 
 dialog.matches('hello', function(session) {
