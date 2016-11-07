@@ -20,6 +20,13 @@ var asteroid = new Asteroid({
     SocketConstructor: ws
 });
 
+/*
+asteroid.loginWithPassword({
+    email: 'javier_su@spring.gov.sg',
+    password: 'password'
+}).then(function(result) {console.log(result);});
+*/
+
 // Create chat bot
 var connector = new builder.ChatConnector({
     appId: "c20ed0f2-619f-4eeb-b121-770a070574b6",
@@ -36,6 +43,30 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
+bot.dialog('/login', [
+        function (session) {
+            builder.Prompts.text(session, "Please give me your email");
+        },
+        function (session, results) {
+            session.userData.email = results.response;
+            builder.Prompts.text(session, "I sent a verification code to your email. What is it?");
+        },
+        function (session, results) {
+            asteroid.loginWithPassword({
+                email: session.userData.email,
+                password: results.response
+            }).then(function(result){
+                session.send("You are now logged in!");
+                session.userData.userId = result
+                session.endDialog(); 
+            }).catch(function(result){
+                console.log(result);
+                session.send("Something went wrong... Please try again");
+                session.endDialog(); 
+                session.beginDialog('/login');
+            });
+        }
+]);
 
 bot.dialog('/profile', [
         function (session) {
@@ -57,9 +88,25 @@ bot.dialog('/profile', [
         }
 ]);
 
+dialog.matches(/^looking for/, function(session) {
+    console.log(session);
+    match = session.message.text.match("looking for (.+)(companies)");
+    asteroid.call('setFilter', {type: match[1].trim()});
+    session.send("Alert sent");
+});
+
+dialog.matches(/\/login_info/, function(session) {
+    if (session.userData.userId) {
+        session.send("You are logged in as: " + session.userData.email);
+    }
+    else {
+        session.send("You are not logged in yet")
+    }
+});
+
 dialog.matches('hello', function(session) {
     session.send("Hi, I’m Olivia! If you're an investor, I can help you find potential investees. If you’re a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
-    session.beginDialog('/profile');
+    session.beginDialog('/login');
 });
 
 dialog.matches('swear', function(session) {
@@ -68,9 +115,8 @@ dialog.matches('swear', function(session) {
 
 dialog.matches('find_industry', function(session, args) {
     var industry = builder.EntityRecognizer.findEntity(args.entities, 'industry');
-    console.log(industry);
     session.send("Searching for %s", industry.entity);
-    asteroid.call('createCompany', "new company");
+
 });
 
 dialog.matches('add_company', function(session, args) {
@@ -86,7 +132,8 @@ dialog.matches('add_company', function(session, args) {
 });
 
 dialog.onDefault(function(session, args) {
-    session.beginDialog('/profile');
+    //session.beginDialog('/profile');
+    session.send("whut?");
 });
 
 //bot.dialog('/', function (session) {
