@@ -81,7 +81,7 @@ dialog.matches(/^looking for/, function(session) {
 
 dialog.matches(/\/login_info/, function(session) {
     if (session.userData.userId) {
-        session.send("You are logged in as: " + session.userData.email);
+        session.send("You user id is " + session.userData.userId);
     }
     else {
         session.send("You are not logged in.")
@@ -108,8 +108,8 @@ dialog.matches(/news/, function(session) {
 // main bot dialogs
 
 dialog.matches('hello', function(session) {
-    console.log(session);
     session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
+    if (session.message.sourceEvent && session.message.sourceEvent.userId) session.userData.userId = session.message.sourceEvent.userId
     session.beginDialog('/profile');
 });
 
