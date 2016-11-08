@@ -43,6 +43,7 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
+
 bot.dialog('/login', [
         function (session) {
             builder.Prompts.text(session, "Please give me your email");
@@ -58,7 +59,8 @@ bot.dialog('/login', [
             }).then(function(result){
                 session.send("You are now logged in!");
                 session.userData.userId = result
-                session.endDialog(); 
+                session.endDialog();
+                session.beginDialog('/profile');
             }).catch(function(result){
                 console.log(result);
                 session.send("Something went wrong... Please try again");
@@ -79,17 +81,17 @@ bot.dialog('/profile', [
                 if (session.userData.type == 'investor')
                     session.send("Cool - are you looking for potential investees, or would you like me to share the latest news?");
                 else
-                    session.send("Cool okay businesssss");
+                    session.send("Cool beans. Are you looking for business partners, investors, or the latest news?");
                 session.endDialog();
             }
             else {
-                //builder.Prompts.text(session, "Come again?");
                 session.send("Come again?")
-//                next({ resumed: builder.ResumeReason.back });
                 session.replaceDialog('/profile');
             }
         }
 ]);
+
+// dialogs to check backend
 
 dialog.matches(/^looking for/, function(session) {
     console.log(session);
@@ -111,14 +113,7 @@ dialog.matches(/what am i\?/, function(session){
     session.send("%s",session.userData.type);
 });
 
-dialog.matches('hello', function(session) {
-    session.send("Hi, I’m Olivia! If you're an investor, I can help you find potential investees. If you’re a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
-    session.beginDialog('/login');
-});
-
-dialog.matches('swear', function(session) {
-    session.send("That is not very nice of you...");
-});
+// concept test dialogs
 
 dialog.matches('find_industry', function(session, args) {
     var industry = builder.EntityRecognizer.findEntity(args.entities, 'industry');
@@ -138,9 +133,83 @@ dialog.matches('add_company', function(session, args) {
     }
 });
 
+// main bot dialogs
+
+dialog.matches('hello', function(session) {
+    session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
+    session.beginDialog('/login');
+});
+
+dialog.matches('find_investees', [
+    function(session, args, next) {
+        var industry = builder.EntityRecognizer.findEntity(args.entities, 'sector');
+        console.log(industry);
+        if (!industry) {
+            builder.Prompts.text(session, 'Great - which industry are you interested in?');
+        }
+        else {
+            next({ response: industry.entity});
+        }
+    },
+    function (session, results) {
+        if (results.response) {
+        session.send("Roger that. Displaying %s companies.", results.response);
+        asteroid.call('setFilter', {sector: results.response.trim()});
+        session.send("Check out the screen on the left! And let me know if you have more specific requirements. Some investors look at companies of a certain size or age; others are interested in where the start-ups are headquartered.");
+        }
+        else {
+            session.send("Come again?");
+            session.replaceDialog("/profile");
+        }
+    }
+]);
+
+// competition criteria and small talk dialogs
+
+dialog.matches(/what problem do you solve\?/, function(session){
+    session.send("Hi, I'm Olivia, and my passion is to help investors and start-ups connect with one another. I can also share with you latest news and insights relevant to your industry, and I'm always learning new things to make your busy life better!");
+});
+
+dialog.matches(/how do you improve the lives of citizens\?/, function(session){
+    session.send("Hi, I'm Olivia, and my passion is to help investors and start-ups connect with one another. I can also share with you latest news and insights relevant to your industry, and I'm always learning new things to make your busy life better!");
+});
+
+dialog.matches(/what is your impact on users\?/, function(session){
+    session.send("Hi, I'm Olivia, and my passion is to help investors and start-ups connect with one another. I can also share with you latest news and insights relevant to your industry, and I'm always learning new things to make your busy life better!");
+});
+
+dialog.matches(/are you working\?/, function(session){
+    session.send("You bet. Working very hard here! And when I'm not working, I'm attending training. Talk about lifelong learning!");
+});
+
+dialog.matches(/do you achieve the vision of the intended use case\?/, function(session){
+    session.send("From what I've been taught, a vision is not something that can be achieved in 4 days, but something that I continually work towards.");
+});
+
+dialog.matches(/how fully are you fleshed out\?/, function(session){
+    session.send("Yucks, there's not a pound of flesh in me!");
+    session.send("I'm still an intern right now, but with time my supervisors will definitely teach me more things so I can better assist you.");
+});
+
+dialog.matches(/^haha/, function(session){
+    session.send("You laughed! My supervisors would be happy to know that I made someone laugh :)");
+});
+
+dialog.matches(/thanks$/, function(session){
+    session.send("You're welcome. Glad I was of help!");
+});
+
+dialog.matches(/bye$/, function(session){
+    session.send("See you! If you'd like to share feedback on how I can better assist you, drop my human supervisors a note here: oliviasups@spring.gov.sg");
+});
+
+dialog.matches('swear', function(session) {
+    session.send("I'm sorry this is a frustrating experience for you. You can email oliviasups@spring.gov.sg to reach my human supervisors if I’m not able to solve your problem right now.");
+});
+
 dialog.onDefault(function(session, args) {
-    //session.beginDialog('/profile');
-    session.send("whut?");
+    session.send("Whut?");
+    session.send("I don't think I'm trained to answer that yet. I currently specialise in handling investor- or start-up-related enquiries only.");
 });
 
 //bot.dialog('/', function (session) {
