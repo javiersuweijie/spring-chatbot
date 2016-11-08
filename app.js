@@ -80,6 +80,7 @@ dialog.matches(/^looking for/, function(session) {
 });
 
 dialog.matches(/\/login_info/, function(session) {
+    console.log(session.userData);
     if (session.userData.userId) {
         session.send("You user id is " + session.userData.userId);
     }
@@ -113,6 +114,7 @@ dialog.matches('hello', function(session) {
     if (session.message.sourceEvent) {
         console.log(session.message.sourceEvent.userId);
         session.userData.userId = session.message.sourceEvent.userId;
+        console.log(session.userData.userId);
     }
     session.beginDialog('/profile');
 });
