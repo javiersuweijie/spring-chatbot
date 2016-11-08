@@ -126,27 +126,20 @@ dialog.matches('swear', function(session) {
 
 dialog.matches('find_industry', function(session, args) {
     var industry = builder.EntityRecognizer.findEntity(args.entities, 'industry');
+    session.userData.sector = industry.entity;
     session.send("Searching for %s", industry.entity);
 
 });
 
-dialog.matches('add_company', function(session, args) {
-    var industry = builder.EntityRecognizer.findEntity(args.entities, 'company_name');
-    console.log(industry);
-    if (industry != null) {
-        session.send("Searching for %s", industry.entity);
-        asteroid.call('createCompany', industry.entity);
-    }
-    else {
-        session.send("Cannot find name, adding company.");
-    }
+dialog.matches(/news/, function(session) {
+    session.beginDialog('/news');
 });
 
 // main bot dialogs
 
 dialog.matches('hello', function(session) {
-    session.send("Hi, I'm Olivia. Happy to help. I can help you find investment and business partners. I can also share the latest startup news and insights.");
-    session.beginDialog('/login');
+    session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
+    session.beginDialog('/profile');
 });
 
 dialog.matches('find_investees', [
