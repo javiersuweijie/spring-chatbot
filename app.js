@@ -46,32 +46,6 @@ server.post('/api/messages', connector.listen());
 var LoginDialog = require('./login');
 LoginDialog(bot, builder, asteroid);
 
-<<<<<<< 42f8e539c1c1bdd2c0988c2324892e31a5c13984
-bot.dialog('/login', [
-        function (session) {
-            builder.Prompts.text(session, "Please enter your email.");
-        },
-        function (session, results) {
-            session.userData.email = results.response;
-            builder.Prompts.text(session, "Please verify your password.");
-        },
-        function (session, results) {
-            asteroid.loginWithPassword({
-                email: session.userData.email,
-                password: results.response
-            }).then(function(result){
-                session.send("Success!");
-                session.userData.userId = result
-                session.endDialog();
-                session.beginDialog('/profile');
-            }).catch(function(result){
-                console.log(result);
-                session.send("Wrong login. Try again?");
-                session.endDialog(); 
-                session.beginDialog('/login');
-            });
-        }
-]);
 
 require('./news_dialog')(bot, builder, asteroid);
 
@@ -119,10 +93,6 @@ dialog.matches(/what am i\?/, function(session){
 });
 
 // concept test dialogs
-
-dialog.matches('swear', function(session) {
-    session.send("That is not very nice of you...");
-});
 
 dialog.matches('find_industry', function(session, args) {
     var industry = builder.EntityRecognizer.findEntity(args.entities, 'industry');

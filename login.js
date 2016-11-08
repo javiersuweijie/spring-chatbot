@@ -1,23 +1,24 @@
 startup = function(bot, builder, asteroid) {
     bot.dialog('/login', [
             function (session) {
-                builder.Prompts.text(session, "Please give me your email");
+                builder.Prompts.text(session, "Please enter your email.");
             },
             function (session, results) {
                 session.userData.email = results.response;
-                builder.Prompts.text(session, "I sent a verification code to your email. What is it?");
+                builder.Prompts.text(session, "Please verify your password.");
             },
             function (session, results) {
                 asteroid.loginWithPassword({
                     email: session.userData.email,
                     password: results.response
                 }).then(function(result){
-                    session.send("You are now logged in!");
+                    session.send("Success!");
                     session.userData.userId = result
-                    session.endDialog(); 
+                    session.endDialog();
+                    session.beginDialog('/profile');
                 }).catch(function(result){
                     console.log(result);
-                    session.send("Something went wrong... Please try again");
+                    session.send("Wrong login. Try again?");
                     session.endDialog(); 
                     session.beginDialog('/login');
                 });
