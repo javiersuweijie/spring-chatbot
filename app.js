@@ -75,7 +75,7 @@ bot.dialog('/profile', [
 dialog.matches(/^looking for/, function(session) {
     console.log(session);
     match = session.message.text.match("looking for (.+)(companies)");
-    asteroid.call('setFilter', {type: match[1].trim()});
+    asteroid.call('setFilter', {user_id:"", type: match[1].trim()});
     session.send("Alert sent");
 });
 
@@ -108,6 +108,7 @@ dialog.matches(/news/, function(session) {
 // main bot dialogs
 
 dialog.matches('hello', function(session) {
+    console.log(session);
     session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
     session.beginDialog('/profile');
 });
