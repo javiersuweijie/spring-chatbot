@@ -81,8 +81,8 @@ dialog.matches(/^looking for/, function(session) {
 
 dialog.matches(/\/login_info/, function(session) {
     console.log(session.userData);
-    if (session.userData.userId) {
-        session.send("You user id is " + session.userData.userId);
+    if (session.userData.meteorId) {
+        session.send("You user id is " + session.userData.meteorId);
     }
     else {
         session.send("You are not logged in.")
@@ -111,8 +111,8 @@ dialog.matches(/news/, function(session) {
 dialog.matches('hello', function(session) {
     console.log(session.message.sourceEvent);
     if (session.message.sourceEvent) {
-        session.userData.userId = session.message.sourceEvent.userId;
-        console.log(session.userData.userId);
+        session.userData.meteorId = session.message.sourceEvent.userId;
+        console.log(session.userData);
     }
     session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
     session.beginDialog('/profile');
