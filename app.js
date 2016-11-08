@@ -109,6 +109,7 @@ dialog.matches(/news/, function(session) {
 
 dialog.matches('hello', function(session) {
     session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
+    console.log(session.message.sourceEvent);
     if (session.message.sourceEvent && session.message.sourceEvent.userId) session.userData.userId = session.message.sourceEvent.userId
     session.beginDialog('/profile');
 });
