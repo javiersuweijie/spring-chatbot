@@ -46,24 +46,24 @@ server.post('/api/messages', connector.listen());
 
 bot.dialog('/login', [
         function (session) {
-            builder.Prompts.text(session, "Please give me your email");
+            builder.Prompts.text(session, "Please enter your email.");
         },
         function (session, results) {
             session.userData.email = results.response;
-            builder.Prompts.text(session, "I sent a verification code to your email. What is it?");
+            builder.Prompts.text(session, "Please verify your password.");
         },
         function (session, results) {
             asteroid.loginWithPassword({
                 email: session.userData.email,
                 password: results.response
             }).then(function(result){
-                session.send("You are now logged in!");
+                session.send("Success!");
                 session.userData.userId = result
                 session.endDialog();
                 session.beginDialog('/profile');
             }).catch(function(result){
                 console.log(result);
-                session.send("Something went wrong... Please try again");
+                session.send("Wrong login. Try again?");
                 session.endDialog(); 
                 session.beginDialog('/login');
             });
@@ -72,20 +72,20 @@ bot.dialog('/login', [
 
 bot.dialog('/profile', [
         function (session) {
-            builder.Prompts.text(session, 'Are you an investor or a business?');
+            builder.Prompts.text(session, 'Are you investor or startup?');
         },
         function (session, results) {
-            if (results.response === 'investor' || results.response === 'business') {
+            if (results.response === 'investor' || results.response === 'startup') {
                 session.userData.type = results.response;
-                session.send("%s huh?", results.response);
+                session.send("%s, huh?", results.response);
                 if (session.userData.type == 'investor')
-                    session.send("Cool - are you looking for potential investees, or would you like me to share the latest news?");
+                    session.send("Are you seeking investees or the latest news?");
                 else
-                    session.send("Cool beans. Are you looking for business partners, investors, or the latest news?");
+                    session.send("Are you seeking other startups, investors, or the latest news?");
                 session.endDialog();
             }
             else {
-                session.send("Come again?")
+                session.send("I don't understand.")
                 session.replaceDialog('/profile');
             }
         }
@@ -105,7 +105,7 @@ dialog.matches(/\/login_info/, function(session) {
         session.send("You are logged in as: " + session.userData.email);
     }
     else {
-        session.send("You are not logged in yet")
+        session.send("You are not logged in.")
     }
 });
 
@@ -129,14 +129,14 @@ dialog.matches('add_company', function(session, args) {
         asteroid.call('createCompany', industry.entity);
     }
     else {
-        session.send("Adding company but cannot find name");
+        session.send("Cannot find name, adding company.");
     }
 });
 
 // main bot dialogs
 
 dialog.matches('hello', function(session) {
-    session.send("Hi, I'm Olivia! If you're an investor, I can help you find potential investees. If you're a start-up, I can connect you with investors and business partners. I can also share with you latest news and insights relevant to your industry. Happy to help! :)");
+    session.send("Hi, I'm Olivia. Happy to help. I can help you find investment and business partners. I can also share the latest startup news and insights.");
     session.beginDialog('/login');
 });
 
@@ -145,7 +145,7 @@ dialog.matches('find_investees', [
         var industry = builder.EntityRecognizer.findEntity(args.entities, 'sector');
         console.log(industry);
         if (!industry) {
-            builder.Prompts.text(session, 'Great - which industry are you interested in?');
+            builder.Prompts.text(session, 'Which industry are you interested in?');
         }
         else {
             next({ response: industry.entity});
@@ -153,12 +153,12 @@ dialog.matches('find_investees', [
     },
     function (session, results) {
         if (results.response) {
-        session.send("Roger that. Displaying %s companies.", results.response);
+        session.send("Roger that. Displaying %s entities on your screen.", results.response);
         asteroid.call('setFilter', {sector: results.response.trim()});
-        session.send("Check out the screen on the left! And let me know if you have more specific requirements. Some investors look at companies of a certain size or age; others are interested in where the start-ups are headquartered.");
+        session.send("Do you have more requirements (e.g. company age, investment till date)?");
         }
         else {
-            session.send("Come again?");
+            session.send("I don't understand.");
             session.replaceDialog("/profile");
         }
     }
@@ -167,19 +167,19 @@ dialog.matches('find_investees', [
 // competition criteria and small talk dialogs
 
 dialog.matches(/what problem do you solve\?/, function(session){
-    session.send("Hi, I'm Olivia, and my passion is to help investors and start-ups connect with one another. I can also share with you latest news and insights relevant to your industry, and I'm always learning new things to make your busy life better!");
+    session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
 dialog.matches(/how do you improve the lives of citizens\?/, function(session){
-    session.send("Hi, I'm Olivia, and my passion is to help investors and start-ups connect with one another. I can also share with you latest news and insights relevant to your industry, and I'm always learning new things to make your busy life better!");
+    session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
 dialog.matches(/what is your impact on users\?/, function(session){
-    session.send("Hi, I'm Olivia, and my passion is to help investors and start-ups connect with one another. I can also share with you latest news and insights relevant to your industry, and I'm always learning new things to make your busy life better!");
+    session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
 dialog.matches(/are you working\?/, function(session){
-    session.send("You bet. Working very hard here! And when I'm not working, I'm attending training. Talk about lifelong learning!");
+    session.send("You bet. I work, hard! When I'm not working, I'm training. Talk about lifelong learning!");
 });
 
 dialog.matches(/do you achieve the vision of the intended use case\?/, function(session){
@@ -188,28 +188,28 @@ dialog.matches(/do you achieve the vision of the intended use case\?/, function(
 
 dialog.matches(/how fully are you fleshed out\?/, function(session){
     session.send("Yucks, there's not a pound of flesh in me!");
-    session.send("I'm still an intern right now, but with time my supervisors will definitely teach me more things so I can better assist you.");
+    session.send("I'm currently an intern, but I'm continually learning so I can better assist you.");
 });
 
-dialog.matches(/^haha/, function(session){
-    session.send("You laughed! My supervisors would be happy to know that I made someone laugh :)");
+dialog.matches(/.*?haha.*?/, function(session){
+    session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/thanks$/, function(session){
-    session.send("You're welcome. Glad I was of help!");
+dialog.matches(/.*?thank.*?/, function(session){
+    session.send("You're welcome. Glad to help!");
 });
 
-dialog.matches(/bye$/, function(session){
-    session.send("See you! If you'd like to share feedback on how I can better assist you, drop my human supervisors a note here: oliviasups@spring.gov.sg");
+dialog.matches(/.*?bye.*?/, function(session){
+    session.send("See you soon! To share feedback on my service, drop my human supervisors a note at olivia_seow@spring.gov.sg");
 });
 
 dialog.matches('swear', function(session) {
-    session.send("I'm sorry this is a frustrating experience for you. You can email oliviasups@spring.gov.sg to reach my human supervisors if I’m not able to solve your problem right now.");
+    session.send("I'm sorry this is frustrating. You can email olivia_seow@spring.gov.sg and a human will get back to you as soon as possible.");
 });
 
 dialog.onDefault(function(session, args) {
     session.send("Whut?");
-    session.send("I don't think I'm trained to answer that yet. I currently specialise in handling investor- or start-up-related enquiries only.");
+    session.send("I'm not trained to answer that yet. Please let me know if you have investor- or startup-related queries!");
 });
 
 //bot.dialog('/', function (session) {
