@@ -50,6 +50,7 @@ require('./profile')(bot, builder, asteroid);
 
 const greetingMsg = require('./greeting');
 const welcomeMsg = require('./welcome');
+const thanksMsg = require('./thanks');
 
 // dialogs to check backend
 
