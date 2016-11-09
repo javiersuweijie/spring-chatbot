@@ -116,7 +116,6 @@ dialog.matches('hello', function(session) {
                     session.userData[key] = data[key];
                 }
                 console.log('User data', session.userData);
-                session.send(greetingMsg());
                 if (!session.userData.started) session.beginDialog('/new_user');
                 else {
                     session.send("Welcome back, %s", session.userData.name);
@@ -132,27 +131,28 @@ dialog.matches('hello', function(session) {
 
 dialog.matches('list_investees', [
     function(session, args) {
-        var industry = builder.EntityRecognizer.findEntity(args.entities, 'Industry Sector');
-        var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'year_incorporated');
-        var location = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.country');
-        console.log(industry);
-        console.log(yearIncorp);
-        console.log(location);
+            var industry = builder.EntityRecognizer.findEntity(args.entities, 'Industry Sector');
+            var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'year_incorporated');
+            var location = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.country');
+            console.log(industry);
+            console.log(yearIncorp);
+            console.log(location);
         if (!industry && !yearIncorp && !location) {
-            builder.Prompts.text(session, 'What are you looking for? (e.g. industry sector, year of incorporation)');
+            session.send("What are you looking for? (e.g. industry sector, year of incorporation)");
+            session.endDialog();
         } else {
-            industry = industry ? industry.entity.trim() : null;
-            yearIncorp = yearIncorp ? parseInt(yearIncorp.entity) : null;
-            location = location ? location.entity.trim() : null;
-            asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
+                industry = industry ? industry.entity.trim() : null;
+                yearIncorp = yearIncorp ? parseInt(yearIncorp.entity) : null;
+                location = location ? location.entity.trim() : null;
+                asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
                                         sector: industry,
                                         year_i: yearIncorp,
                                         country: location}})
-                .catch(function(error){console.log(error)});
-            session.send("Done. Do you have other requirements to add (e.g. company growth, investment till date)? Alternatively, type 'end' to end search.");
-            session.endDialog();            
+                    .catch(function(error){console.log(error)});
+                session.send("Done. Do you have other requirements to add (e.g. company growth, investment till date)? Alternatively, type 'end' to end search.");
+                session.endDialog();
+            }
         }
-    }
 ]);
 
 // competition criteria and small talk dialogs
