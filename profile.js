@@ -10,7 +10,7 @@ startup = function(bot, builder, asteroid) {
                 session.userData.type = results.response.entity;
                 session.send("%s, huh?", results.response.entity);
                 if (session.userData.type == 'investor')
-                    session.send("Are you seeking investees or the latest news?");
+                    builder.Prompts.choice(session, 'What would you like me to help with?', "Recommend companies|Find news and insights");
                 else
                     session.send("Are you seeking other startups, investors, or the latest news?");
                     session.endDialog();

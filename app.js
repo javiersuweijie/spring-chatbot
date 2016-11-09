@@ -94,7 +94,7 @@ dialog.matches('find_industry', function(session, args) {
 
 });
 
-dialog.matches(/.*?(N|n)ews.*?/, function(session) {
+dialog.matches(/.*?news.*?/i, function(session) {
     session.beginDialog('/news');
 });
 
@@ -125,30 +125,26 @@ dialog.matches('hello', function(session) {
 });
 
 dialog.matches('list_investees', [
-    function(session, args, next) {
+    function(session, args) {
         var industry = builder.EntityRecognizer.findEntity(args.entities, 'Industry Sector');
         var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'year_incorporated');
+        var location = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.country');
         console.log(industry);
         console.log(yearIncorp);
-        if (!industry) {
-            builder.Prompts.choice(session, 'Which industry are you interested in?', "ICT|CleanTech|FinTech");
-        }
-        else {
-            next({ response: industry.entity});
-        }
-    },
-    function (session, results) {
-        if (results.response) {
-// note to self: should do a filter, then do a count.
-// if count = 0, need to say that there are no results found. if count > 0, can display number of entries as well
-        console.log(results.response.entities);
-        session.send("Roger that. Displaying %(industry)s entities incorporated in %(yearIncorp)s on your screen.", results.response.entity);        session.send("Roger that. Displaying %s entities on your screen.", results.response);
-        asteroid.call('setFilter', {sector: results.response.entity});
-        session.send("Do you have more requirements (e.g. company age, investment till date)?");
-        }
-        else {
-            session.send("I don't understand.");
-            session.endDialog();
+        console.log(location);
+        if (!industry && !yearIncorp && !location) {
+            builder.Prompts.text(session, 'What are you looking for? (e.g. industry sector, year of incorporation)');
+        } else {
+            industry = industry ? industry.entity.trim() : null;
+            yearIncorp = yearIncorp ? parseInt(yearIncorp.entity) : null;
+            location = location ? location.entity.trim() : null;
+            asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
+                                        sector: industry,
+                                        year_i: yearIncorp,
+                                        country: location}})
+                .catch(function(error){console.log(error)});
+            session.send("Done. Do you have other requirements to add (e.g. company growth, investment till date)? Alternatively, type 'end' to end search.");
+            session.endDialog();            
         }
     }
 ]);
@@ -180,15 +176,15 @@ dialog.matches(/.*?fleshed out.*?/, function(session){
     session.send("This is my first week at work, but I'm continually learning so I can better assist you.");
 });
 
-dialog.matches(/.*?(H|h)aha.*?/, function(session){
+dialog.matches(/.*?haha.*?/i, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/.*?(T|t)hank.*?/, function(session){
+dialog.matches(/.*?thank.*?/i, function(session){
     session.send(welcomeMsg());
 });
 
-dialog.matches(/.*?(B|b)ye.*?/, function(session){
+dialog.matches(/.*?bye.*?/i, function(session){
     session.send("See you soon! To share feedback on my service, drop my human supervisors a note at olivia_seow@spring.gov.sg");
 });
 
