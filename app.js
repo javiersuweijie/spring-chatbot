@@ -46,11 +46,13 @@ server.post('/api/messages', connector.listen());
 require('./new_user')(bot, builder, asteroid);
 require('./news_dialog')(bot, builder, asteroid);
 require('./find_investees')(bot, builder, asteroid);
-require('./profile')(bot, builder, asteroid);
+require('./returning_user')(bot, builder, asteroid);
+require('./returning_user_nonews')(bot, builder, asteroid);
 
 const greetingMsg = require('./greeting');
 const welcomeMsg = require('./welcome');
 const thanksMsg = require('./thanks');
+const investeeSearch = require('./investee_search');
 
 // dialogs to check backend
 
@@ -124,7 +126,7 @@ dialog.matches('hello', function(session) {
                 if (!session.userData.started) session.beginDialog('/new_user');
                 else {
                     session.send("Welcome back, %s", session.userData.name);
-                    session.beginDialog('/profile');
+                    session.beginDialog('/returning_user');
                 }
             })
             .catch(function(data) {
@@ -139,20 +141,27 @@ dialog.matches('find_investees', [
             var industry = builder.EntityRecognizer.findEntity(args.entities, 'start-up_industry');
             var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'start-up_year_incorporated');
             var location = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.country');
-            console.log(industry);
-            console.log(yearIncorp);
-            console.log(location);
-        if (!industry && !yearIncorp && !location) {
-            session.send("What are you looking for? (e.g. industry sector, year of incorporation)");
+            var businessType = builder.EntityRecognizer.findEntity(args.entities, 'start-up_business_type');
+            var fundingStage = builder.EntityRecognizer.findEntity(args.entities, 'start-up_funding_stage');
+            var grant = builder.EntityRecognizer.findEntity(args.entities, 'start-up_grant_type');
+            console.log(industry, yearIncorp, location, businessType, fundingStage, grant);
+        if (!industry && !yearIncorp && !location && !businessType && !fundingStage && !grant) {
+            session.send(investeeSearch());
             session.endDialog();
         } else {
                 industry = industry ? industry.entity.trim() : null;
                 yearIncorp = yearIncorp ? parseInt(yearIncorp.entity) : null;
                 location = location ? location.entity.trim() : null;
+                businessType = businessType ? businessType.entity.trim() : null,
+                fundingStage = fundingStage ? fundingStage.entity.trim() : null,
+                grant = grant ? grant.entity.trim() : null,
+// need to figure out how to filter grant because there is grant1 and grant2 in the database
                 asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
                                         sector: industry,
                                         year_i: yearIncorp,
-                                        country: location}})
+                                        country: location,
+                                        'b2b/b2c/both': businessType,
+                                        funding: fundingStage}})
                     .catch(function(error){console.log(error)});
                 session.send("Done. Displaying requested companies.");
                 session.endDialog();
@@ -195,7 +204,7 @@ dialog.matches(/.*?th(x|ank).*?/i, function(session){
     session.send(welcomeMsg());
 });
 
-dialog.matches(/(wow|great|good|awesome|cool|amaz)/i, function(session){
+dialog.matches(/(wow|great|good|awesome|pretty|cool|neat|nice|amaz)/i, function(session){
     session.send(thanksMsg());
 });
 

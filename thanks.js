@@ -5,7 +5,8 @@ const thanksMsg = () => {
     "Thanks!",
     "Thank you! :)",
     "Aww, that's nice of you.",
-    "Thanks! That means a lot."
+    "Thanks! That means a lot.",
+    "Thanks! Happy to help."
   ]
   return random(answers)
 };
