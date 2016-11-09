@@ -104,6 +104,10 @@ dialog.matches(/.*?news.*?/i, function(session) {
 
 // main bot dialogs
 
+dialog.matches('news', function(session) {
+    session.beginDialog('/news');
+});
+
 dialog.matches('hello', function(session) {
     if (session.message.sourceEvent) {
         session.userData.meteorId = session.message.sourceEvent.userId;
@@ -129,10 +133,10 @@ dialog.matches('hello', function(session) {
     else session.send("You have not registered. Please create an account on the left");
 });
 
-dialog.matches('list_investees', [
+dialog.matches('find_investees', [
     function(session, args) {
-            var industry = builder.EntityRecognizer.findEntity(args.entities, 'Industry Sector');
-            var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'year_incorporated');
+            var industry = builder.EntityRecognizer.findEntity(args.entities, 'start-up_industry');
+            var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'start-up_year_incorporated');
             var location = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.country');
             console.log(industry);
             console.log(yearIncorp);
@@ -149,7 +153,7 @@ dialog.matches('list_investees', [
                                         year_i: yearIncorp,
                                         country: location}})
                     .catch(function(error){console.log(error)});
-                session.send("Done. Do you have other requirements to add (e.g. company growth, investment till date)? Alternatively, type 'end' to end search.");
+                session.send("Done. Displaying requested companies.");
                 session.endDialog();
             }
         }
@@ -157,7 +161,7 @@ dialog.matches('list_investees', [
 
 // competition criteria and small talk dialogs
 
-dialog.matches(/.*?(problem|solve)?.*?/, function(session){
+dialog.matches(/.*?(problem|solve).*?/, function(session){
     session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
@@ -186,12 +190,17 @@ dialog.matches(/.*?haha.*?/i, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/.*?thank.*?/i, function(session){
+dialog.matches(/.*?th(x|ank).*?/i, function(session){
     session.send(welcomeMsg());
 });
 
+dialog.matches(/(wow|great|good|awesome|cool|amaz)/i, function(session){
+    session.send(thanksMsg());
+});
+
 dialog.matches(/.*?bye.*?/i, function(session){
-    session.send("See you soon! To share feedback on my service, drop my human supervisors a note at olivia_seow@spring.gov.sg");
+    session.send(greetingMsg());
+    session.send("If you have feedback, please drop my human supervisors a note at olivia_seow@spring.gov.sg :)");
 });
 
 dialog.matches('swear', function(session) {

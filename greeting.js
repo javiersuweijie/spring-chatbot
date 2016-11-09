@@ -2,9 +2,11 @@ const random = array => { return array[Math.floor(Math.random() * array.length)]
 
 const greetingMsg = () => {
   const answers = [
-    "Hello! What do you need?",
-    "Hi! How can I help you?",
-    "Hey, what's up?",
+    "Bye!",
+    "See you soon!",
+    "See you!",
+    "Ciao! Talk again soon.",
+    "Goodbye!"
   ]
   return random(answers)
 };

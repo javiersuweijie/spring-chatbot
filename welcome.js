@@ -6,7 +6,7 @@ const welcomeMsg = () => {
     "No problem. Glad to help!",
     "You're welcome!",
     "My pleasure.",
-    "Happy to help :)",
+    "Happy to help :)"
   ]
   return random(answers)
 };
