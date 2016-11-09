@@ -81,7 +81,7 @@ dialog.matches(/^\/filter_sector/, function(session) {
     session.send("filtered sector to %s", match[1]);
 });
 
-dialog.matches(/what am i\?/, function(session){
+dialog.matches(/(W|w)hat am (I|i)\?/, function(session){
     session.send("%s",session.userData.type);
 });
 
@@ -94,7 +94,7 @@ dialog.matches('find_industry', function(session, args) {
 
 });
 
-dialog.matches(/.*?news.*?/, function(session) {
+dialog.matches(/.*?(N|n)ews.*?/, function(session) {
     session.beginDialog('/news');
 });
 
@@ -124,9 +124,31 @@ dialog.matches('hello', function(session) {
     else session.beginDialog('/profile');
 });
 
-dialog.matches('find_investees', function(session) {
-    session.beginDialog('/investees');
-});
+dialog.matches('find_investees', [
+    function(session, args, next) {
+        var industry = builder.EntityRecognizer.findEntity(args.entities, 'sector');
+        console.log(industry);
+        if (!industry) {
+            builder.Prompts.text(session, 'Which industry are you interested in?');
+        }
+        else {
+            next({ response: industry.entity});
+        }
+    },
+    function (session, results) {
+        if (results.response) {
+// note to self: should do a filter, then do a count.
+// if count = 0, need to say that there are no results found. if count > 0, can display number of entries as well
+        session.send("Roger that. Displaying %s entities on your screen.", results.response);
+        asteroid.call('setFilter', {sector: results.response.trim()});
+        session.send("Do you have more requirements (e.g. company age, investment till date)?");
+        }
+        else {
+            session.send("I don't understand.");
+            session.endDialog();
+        }
+    }
+]);
 
 // competition criteria and small talk dialogs
 
@@ -155,16 +177,15 @@ dialog.matches(/.*?fleshed out.*?/, function(session){
     session.send("This is my first week at work, but I'm continually learning so I can better assist you.");
 });
 
-dialog.matches(/.*?haha.*?/, function(session){
+dialog.matches(/.*?(H|h)aha.*?/, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/.*?thank.*?/, function(session){
-//    session.send("You're welcome. Glad to help!");
+dialog.matches(/.*?(T|t)hank.*?/, function(session){
     session.send(welcomeMsg());
 });
 
-dialog.matches(/.*?bye.*?/, function(session){
+dialog.matches(/.*?(B|b)ye.*?/, function(session){
     session.send("See you soon! To share feedback on my service, drop my human supervisors a note at olivia_seow@spring.gov.sg");
 });
 
