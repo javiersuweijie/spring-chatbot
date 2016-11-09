@@ -103,12 +103,14 @@ dialog.matches('hello', function(session) {
     session.beginDialog('/profile');
 });
 
-dialog.matches('find_investees', [
+dialog.matches('list_investees', [
     function(session, args, next) {
-        var industry = builder.EntityRecognizer.findEntity(args.entities, 'sector');
+        var industry = builder.EntityRecognizer.findEntity(args.entities, 'Industry Sector');
+        var yearIncorp = builder.EntityRecognizer.findEntity(args.entities, 'year_incorporated');
         console.log(industry);
+        console.log(yearIncorp);
         if (!industry) {
-            builder.Prompts.text(session, 'Which industry are you interested in?');
+            builder.Prompts.choice(session, 'Which industry are you interested in?', "ICT|CleanTech|FinTech");
         }
         else {
             next({ response: industry.entity});
@@ -118,8 +120,9 @@ dialog.matches('find_investees', [
         if (results.response) {
 // note to self: should do a filter, then do a count.
 // if count = 0, need to say that there are no results found. if count > 0, can display number of entries as well
-        session.send("Roger that. Displaying %s entities on your screen.", results.response);
-        asteroid.call('setFilter', {sector: results.response.trim()});
+        console.log(results.response.entities);
+        session.send("Roger that. Displaying %(industry)s entities incorporated in %(yearIncorp)s on your screen.", results.response.entity);        session.send("Roger that. Displaying %s entities on your screen.", results.response);
+        asteroid.call('setFilter', {sector: results.response.entity});
         session.send("Do you have more requirements (e.g. company age, investment till date)?");
         }
         else {
