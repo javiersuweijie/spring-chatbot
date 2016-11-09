@@ -81,6 +81,10 @@ dialog.matches(/^\/filter_sector/, function(session) {
     session.send("filtered sector to %s", match[1]);
 });
 
+dialog.matches(/^\/show_news/, function(session) {
+    session.beginDialog('/news');
+});
+
 dialog.matches(/(W|w)hat am (I|i)\?/, function(session){
     session.send("%s",session.userData.type);
 });
@@ -101,27 +105,26 @@ dialog.matches(/.*?(N|n)ews.*?/, function(session) {
 // main bot dialogs
 
 dialog.matches('hello', function(session) {
-    console.log(session.message.sourceEvent);
     if (session.message.sourceEvent) {
         session.userData.meteorId = session.message.sourceEvent.userId;
-        console.log("User detected: session.userData");
+        console.log("User detected: "+ session.userData);
     }
     if (session.userData.meteorId) {
         asteroid.call("getUser", session.userData.meteorId)
             .then(function(data) {
-                console.log("success", data);
                 for (var key in data) {
                     session.userData[key] = data[key];
                 }
                 console.log('User data', session.userData);
+                session.send(greetingMsg());
+                if (!session.userData.started) session.beginDialog('/new_user');
+                else session.beginDialog('/news');
             })
             .catch(function(data) {
                 console.log("error", data);
             });
     }
-    session.send(greetingMsg());
-    if (!session.userData.started) session.beginDialog('/new_user');
-    else session.beginDialog('/profile');
+    else session.send("You have not registered. Please create an account on the left");
 });
 
 dialog.matches('find_investees', [
