@@ -63,25 +63,25 @@ dialog.matches(/\/login_info/, function(session) {
     }
 });
 
-dialog.matches(/^\/login_set/, function(session) {
+dialog.matches(/\/login_set/, function(session) {
     match = session.message.text.match("\/login_set (.+)");
     session.userData.meteorId = match[1];
     console.log(session.userData);
     session.send("Updated login information");
 });
 
-dialog.matches(/^\/login_reset/, function(session) {
+dialog.matches(/\/login_reset/, function(session) {
     session.userData = {};
     session.send("Cleared login information");
 });
 
-dialog.matches(/^\/filter_sector/, function(session) {
+dialog.matches(/\/filter_sector/, function(session) {
     match = session.message.text.match("\/filter_sector (.+)");
     asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter:{sector: match[1]}});
     session.send("filtered sector to %s", match[1]);
 });
 
-dialog.matches(/^\/show_news/, function(session) {
+dialog.matches(/\/show_news/, function(session) {
     session.beginDialog('/news');
 });
 
