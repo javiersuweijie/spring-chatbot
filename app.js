@@ -88,8 +88,12 @@ dialog.matches(/\/show_news/, function(session) {
     session.beginDialog('/news');
 });
 
-dialog.matches(/(W|w)hat am (I|i)\?/, function(session){
+dialog.matches(/what am i\?/i, function(session){
     session.send("%s",session.userData.type);
+});
+
+dialog.matches(/what is my interest\?/i, function(session){
+    session.send("%s",session.userData.interest);
 });
 
 // concept test dialogs
