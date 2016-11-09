@@ -37,6 +37,7 @@ startup = function(bot, builder, asteroid) {
                             console.log(results);
                         });
                     session.endDialog();
+                    session.beginDialog('/profile');
                 }
             }
     ]);

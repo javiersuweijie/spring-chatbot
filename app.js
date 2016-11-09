@@ -118,7 +118,10 @@ dialog.matches('hello', function(session) {
                 console.log('User data', session.userData);
                 session.send(greetingMsg());
                 if (!session.userData.started) session.beginDialog('/new_user');
-                else session.beginDialog('/news');
+                else {
+                    session.send("Welcome back, %s", session.userData.name);
+                    session.beginDialog('/profile');
+                }
             })
             .catch(function(data) {
                 console.log("error", data);
