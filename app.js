@@ -43,27 +43,15 @@ server.post('/api/messages', connector.listen());
 // Bots Dialogs
 //=========================================================
 
-var LoginDialog = require('./login');
-LoginDialog(bot, builder, asteroid);
-
+require('./new_user')(bot, builder, asteroid);
 require('./news_dialog')(bot, builder, asteroid);
-
 require('./find_investees')(bot, builder, asteroid);
-
 require('./profile')(bot, builder, asteroid);
 
 const greetingMsg = require('./greeting');
-
 const welcomeMsg = require('./welcome');
 
 // dialogs to check backend
-
-dialog.matches(/^looking for/, function(session) {
-    console.log(session);
-    match = session.message.text.match("looking for (.+)(companies)");
-    asteroid.call('setFilter', {user_id:"", type: match[1].trim()});
-    session.send("Alert sent");
-});
 
 dialog.matches(/\/login_info/, function(session) {
     console.log(session.userData);
@@ -73,6 +61,24 @@ dialog.matches(/\/login_info/, function(session) {
     else {
         session.send("You are not logged in.")
     }
+});
+
+dialog.matches(/^\/login_set/, function(session) {
+    match = session.message.text.match("\/login_set (.+)");
+    session.userData.meteorId = match[1];
+    console.log(session.userData);
+    session.send("Updated login information");
+});
+
+dialog.matches(/^\/login_reset/, function(session) {
+    session.userData = {};
+    session.send("Cleared login information");
+});
+
+dialog.matches(/^\/filter_sector/, function(session) {
+    match = session.message.text.match("\/filter_sector (.+)");
+    asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter:{sector: match[1]}});
+    session.send("filtered sector to %s", match[1]);
 });
 
 dialog.matches(/what am i\?/, function(session){
@@ -98,11 +104,24 @@ dialog.matches('hello', function(session) {
     console.log(session.message.sourceEvent);
     if (session.message.sourceEvent) {
         session.userData.meteorId = session.message.sourceEvent.userId;
-        console.log(session.userData);
+        console.log("User detected: session.userData");
     }
-    if (session.message.sourceEvent && session.message.sourceEvent.userId) session.userData.userId = session.message.sourceEvent.userId
+    if (session.userData.meteorId) {
+        asteroid.call("getUser", session.userData.meteorId)
+            .then(function(data) {
+                console.log("success", data);
+                for (var key in data) {
+                    session.userData[key] = data[key];
+                }
+                console.log('User data', session.userData);
+            })
+            .catch(function(data) {
+                console.log("error", data);
+            });
+    }
     session.send(greetingMsg());
-    session.beginDialog('/profile');
+    if (!session.userData.started) session.beginDialog('/new_user');
+    else session.beginDialog('/profile');
 });
 
 dialog.matches('find_investees', function(session) {

@@ -17,7 +17,7 @@ startup = function(bot, builder, asteroid) {
     // note to self: should do a filter, then do a count.
     // if count = 0, need to say that there are no results found. if count > 0, can display number of entries as well
             session.send("Roger that. Displaying %s entities on your screen.", results.response);
-            asteroid.call('setFilter', {sector: results.response.trim()});
+            asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter:{sector: results.response.trim()}});
             session.send("Do you have more requirements (e.g. company age, investment till date)?");
             }
             else {
