@@ -48,8 +48,6 @@ LoginDialog(bot, builder, asteroid);
 
 require('./news_dialog')(bot, builder, asteroid);
 
-require('./find_investees')(bot, builder, asteroid);
-
 require('./profile')(bot, builder, asteroid);
 
 const greetingMsg = require('./greeting');
@@ -75,7 +73,7 @@ dialog.matches(/\/login_info/, function(session) {
     }
 });
 
-dialog.matches(/what am i\?/, function(session){
+dialog.matches(/(W|w)hat am (I|i)\?/, function(session){
     session.send("%s",session.userData.type);
 });
 
@@ -88,7 +86,7 @@ dialog.matches('find_industry', function(session, args) {
 
 });
 
-dialog.matches(/.*?news.*?/, function(session) {
+dialog.matches(/.*?(N|n)ews.*?/, function(session) {
     session.beginDialog('/news');
 });
 
@@ -158,16 +156,16 @@ dialog.matches(/.*?fleshed out.*?/, function(session){
     session.send("This is my first week at work, but I'm continually learning so I can better assist you.");
 });
 
-dialog.matches(/.*?haha.*?/, function(session){
+dialog.matches(/.*?(H|h)aha.*?/, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/.*?thank.*?/, function(session){
+dialog.matches(/.*?(T|t)hank.*?/, function(session){
 //    session.send("You're welcome. Glad to help!");
     session.send(welcomeMsg());
 });
 
-dialog.matches(/.*?bye.*?/, function(session){
+dialog.matches(/.*?(B|b)ye.*?/, function(session){
     session.send("See you soon! To share feedback on my service, drop my human supervisors a note at olivia_seow@spring.gov.sg");
 });
 
