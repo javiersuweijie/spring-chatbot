@@ -3,9 +3,11 @@ startup = function(bot, builder, asteroid) {
             function(session, args) {
                 var interest = null;
                 if (args && args.industry) interest = args.industry;
-                else if (session.userData.interest) interest = session.userData.interest
-                if (interest) {
+                else if (session.userData.interest) {
+                    interest = session.userData.interest
                     session.send("You stated interests in "+ interest);
+                }
+                if (interest) {
                     asteroid.call("getNews",{meteorId:session.userData.meteorId,filter:{sector: interest}})
                         .then(function(data) {
                             var count = parseInt(data);
