@@ -54,7 +54,7 @@ const greetingMsg = require('./greeting');
 const welcomeMsg = require('./welcome');
 const thanksMsg = require('./thanks');
 const investeeSearch = require('./investee_search');
-
+const investorSearch = require('./investor_search');
 
 dialog.matches(/what am i\?/i, function(session){
     session.send("%s",session.userData.type);
@@ -150,6 +150,41 @@ dialog.matches('find_investees', [
         }
 ]);
 
+dialog.matches('find_investors', [
+    function(session, args) {
+            var industry = builder.EntityRecognizer.findEntity(args.entities, 'start-up_industry');
+            var location = builder.EntityRecognizer.findEntity(args.entities, 'builtin.geography.country');
+            var businessType = builder.EntityRecognizer.findEntity(args.entities, 'start-up_business_type');
+            var fundingStage = builder.EntityRecognizer.findEntity(args.entities, 'start-up_funding_stage');
+            console.log(industry, location, businessType, fundingStage);
+        if (!industry && !location && !businessType && !fundingStage) {
+            session.send(investorSearch());
+            session.endDialog();
+        } else {
+                industry = industry ? industry.entity.trim() : null;
+                location = location ? location.entity.trim() : null;
+                businessType = businessType ? businessType.entity.trim() : null,
+                fundingStage = fundingStage ? fundingStage.entity.trim() : null,
+                asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
+                                        sector: industry,
+                                        country: location,
+                                        b2_: businessType,
+                                        funding: fundingStage}})
+                    .then(function(result){
+                        var count = parseInt(result);                        
+                        var investor_s = count==1 ? "investor" : "investors";
+                        if (count) session.send("I found %s %s",result, investor_s);
+                        else session.send("I did not find any investors that you were looking for.");
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        session.send("Bugs and more bugs. They never end do they?"); 
+                    });
+                session.endDialog();
+            }
+        }
+]);
+
 // competition criteria and small talk dialogs
 
 dialog.matches(/.*?(problem|solve).*/, function(session){
@@ -181,7 +216,7 @@ dialog.matches(/.*?haha.*/i, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/th(x|ank).*/i, function(session){
+dialog.matches('thanks', function(session){
     session.send(welcomeMsg());
 });
 
