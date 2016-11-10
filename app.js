@@ -129,7 +129,7 @@ dialog.matches('find_investees', [
                 fundingStage = fundingStage ? fundingStage.entity.trim() : null,
                 grant = grant ? grant.entity.trim() : null,
 // need to figure out how to filter grant because there is grant1 and grant2 in the database
-                asteroid.call('setInvestor', {meteorId:session.userData.meteorId, filter: {
+                asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
                                         sector: industry,
                                         year_i: yearIncorp,
                                         country: location,
@@ -165,7 +165,7 @@ dialog.matches('find_investors', [
                 location = location ? location.entity.trim() : null;
                 businessType = businessType ? businessType.entity.trim() : null,
                 fundingStage = fundingStage ? fundingStage.entity.trim() : null,
-                asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
+                asteroid.call('setInvestor', {meteorId:session.userData.meteorId, filter: {
                                         sector: industry,
                                         country: location,
                                         b2_: businessType,
