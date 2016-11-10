@@ -12,8 +12,12 @@ startup = function(bot, builder, asteroid) {
                 session.userData.type = results.response.entity;
                 var a = session.userData.type=="investor" ? 'an' : 'a';
                 session.send("So you are %s %s huh?", a, session.userData.type);
-                session.send("Which sector are you interested in?");
-                builder.Prompts.choice(session, "Right now, we only have data for the following sectors:", "fintech|cleantech|ict");
+                if (session.userData.type === 'investor') {
+                    session.send("Which sector are you interested in?");
+                } else {
+                    session.send("Which sector is your business in?");
+                }
+                builder.Prompts.choice(session, "Right now, I have data for these sectors:", "fintech|cleantech|ict");
             },
             function (session, results, next) {
                 console.log(results.response);
@@ -23,10 +27,16 @@ startup = function(bot, builder, asteroid) {
                     .catch(function(results) {
                         console.log(results);
                     });
-                session.send("I will try to remember you.");
-                session.send("I can help you find investment and business partners.\nI can also share the latest news.");
-                session.send("So how can I help?");
-                session.endDialog();
+                session.send("All set, %s! I definitely won't forget you.", session.userData.name);
+                if (session.userData.type === 'investor') {
+                    session.send("I can help you find potential investees.\nI can also share the latest news.");
+                    session.send("So how can I help?");
+                    session.endDialog();
+                } else {
+                    session.send("I can help you find potential investors.\nI can also share the latest news.");
+                    session.send("So how can I help?");
+                    session.endDialog();                    
+                }
             }
     ]);
 };

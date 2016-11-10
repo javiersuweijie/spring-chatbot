@@ -1,7 +1,7 @@
 startup = function(bot, builder, asteroid) {
     bot.dialog('/returning_user', [
         function (session, results) {
-            builder.Prompts.choice(session, "While you were gone, I found some interesting " + session.userData.interest + " news. Would you like to see them?", "Yes|No");
+            builder.Prompts.choice(session, "While you were away, I found some interesting " + session.userData.interest + " news. Would you like to see them?", "Yes|No");
             },
             function (session, results) {
                 if (results.response.entity === 'Yes') {
