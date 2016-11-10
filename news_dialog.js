@@ -19,10 +19,11 @@ startup = function(bot, builder, asteroid) {
                             else {
                                 session.send("Sorry I did not find any relevant articles.");
                             }
-                            session.endDialog();
+                            if (session.userData.return) session.replaceDialog('/returning_user_nonews');
+                            else session.endDialog();
                         })
                         .catch(function(data) {
-                            session.send("Opps. Something is not right.");
+                            session.send("Opps. Something is not right here.");
                             session.endDialog();
                         });
                 }
