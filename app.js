@@ -45,7 +45,6 @@ server.post('/api/messages', connector.listen());
 
 require('./new_user')(bot, builder, asteroid);
 require('./news_dialog')(bot, builder, asteroid);
-require('./find_investees')(bot, builder, asteroid);
 require('./returning_user')(bot, builder, asteroid);
 require('./returning_user_nonews')(bot, builder, asteroid);
 require('./debug_commands')(bot, builder, asteroid, dialog);
@@ -55,14 +54,8 @@ const welcomeMsg = require('./welcome');
 const thanksMsg = require('./thanks');
 const investeeSearch = require('./investee_search');
 const investorSearch = require('./investor_search');
-
-dialog.matches(/what am i\?/i, function(session){
-    session.send("%s",session.userData.type);
-});
-
-dialog.matches(/what is my interest\?/i, function(session){
-    session.send("%s",session.userData.interest);
-});
+var investeeCount = require('./investee_count');
+var investorCount = require('./investor_count');
 
 // concept test dialogs
 
@@ -72,10 +65,6 @@ dialog.matches('find_industry', function(session, args) {
     session.send("Searching for %s", industry.entity);
 
 });
-
-//dialog.matches(/.*?news.*?/i, function(session) {
-//    session.beginDialog('/news');
-//});
 
 // main bot dialogs
 
@@ -128,7 +117,7 @@ dialog.matches('find_investees', [
                 businessType = businessType ? businessType.entity.trim() : null,
                 fundingStage = fundingStage ? fundingStage.entity.trim() : null,
                 grant = grant ? grant.entity.trim() : null,
-// need to figure out how to filter grant because there is grant1 and grant2 in the database
+// have not figured out how to filter grant because there is grant1 and grant2 in the database
                 asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
                                         sector: industry,
                                         year_i: yearIncorp,
@@ -138,7 +127,7 @@ dialog.matches('find_investees', [
                     .then(function(result){
                         var count = parseInt(result);                        
                         var company_s = count==1 ? "company" : "companies";
-                        if (count) session.send("I found %s %s",result, company_s);
+                        if (count) session.send(investeeCount(result, company_s));
                         else session.send("I did not find any companies that you were looking for.");
                     })
                     .catch(function(error) {
@@ -173,7 +162,7 @@ dialog.matches('find_investors', [
                     .then(function(result){
                         var count = parseInt(result);                        
                         var investor_s = count==1 ? "investor" : "investors";
-                        if (count) session.send("I found %s %s",result, investor_s);
+                        if (count) session.send(investorCount(result, investor_s));
                         else session.send("I did not find any investors that you were looking for.");
                     })
                     .catch(function(error) {
@@ -210,6 +199,18 @@ dialog.matches(/.*?fleshed out.*/, function(session){
 
 dialog.matches(/.*?haha.*/i, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
+});
+
+dialog.matches(/.*?grant.*?/i, function(session){
+    session.send("Grants are for the weak...I know you're better than that!");
+});
+
+dialog.matches(/.*?what do you do.*?/i, function(session){
+    session.send("I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
+});
+
+dialog.matches(/who are you\?/i, function(session){
+    session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
 dialog.matches('thanks', function(session){

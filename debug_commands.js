@@ -22,6 +22,14 @@ startup = function(bot, builder, asteroid, dialog) {
         session.send("Cleared login information");
     });
 
+    dialog.matches(/what am i\?/i, function(session){
+        session.send("%s",session.userData.type);
+    });
+
+    dialog.matches(/what is my interest\?/i, function(session){
+        session.send("%s",session.userData.interest);
+    });
+
     dialog.matches(/\/filter_sector/, function(session) {
         match = session.message.text.match("\/filter_sector (.+)");
         asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter:{sector: match[1]}});
