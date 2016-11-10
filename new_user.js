@@ -23,8 +23,10 @@ startup = function(bot, builder, asteroid) {
                     .catch(function(results) {
                         console.log(results);
                     });
+                session.send("I will try to remember you.");
+                session.send("I can help you find investment and business partners.\nI can also share the latest news.");
+                session.send("So how can I help?");
                 session.endDialog();
-                session.beginDialog('/returning_user');
             }
     ]);
 };
