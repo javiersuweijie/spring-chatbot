@@ -12,7 +12,8 @@ startup = function(bot, builder, asteroid) {
                             if (count) {
                                 var article_s = count == 1 ? "article" : "articles"
                                 session.send("Found %s %s related to %s",data ,article_s, interest);
-                                session.send("Showing you only 3 articles");
+                                if (count > 5)
+                                session.send("Showing you only 5 articles");
                             }
                             else {
                                 session.send("Sorry I did not find any relevant articles");
