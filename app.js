@@ -144,36 +144,36 @@ dialog.matches('find_investees', [
 
 // competition criteria and small talk dialogs
 
-dialog.matches(/.*?(problem|solve).*?/, function(session){
+dialog.matches(/.*?(problem|solve).*/, function(session){
     session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
-dialog.matches(/.*?improve.*?(lives|citizens).*?/, function(session){
+dialog.matches(/.*?improve.*(lives|citizens).*/, function(session){
     session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
-dialog.matches(/.*?impact.*?users\?/, function(session){
+dialog.matches(/.*?impact.*users.*/, function(session){
     session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
-dialog.matches(/.*?working\?/, function(session){
+dialog.matches(/.*?working.*/, function(session){
     session.send("You bet. I work, hard! When I'm not working, I'm training. Talk about lifelong learning!");
 });
 
-dialog.matches(/.*?vision.*?use case.*?/, function(session){
+dialog.matches(/.*?vision.*use case.*/, function(session){
     session.send("From what I've been taught, a vision is not something that can be achieved in 4 days, but something that I continually work towards.");
 });
 
-dialog.matches(/.*?fleshed out.*?/, function(session){
+dialog.matches(/.*?fleshed out.*/, function(session){
     session.send("Yucks, there's not a pound of flesh in me!");
     session.send("This is my first week at work, but I'm continually learning so I can better assist you.");
 });
 
-dialog.matches(/.*?haha.*?/i, function(session){
+dialog.matches(/.*?haha.*/i, function(session){
     session.send("You laughed! I wish I knew how to laugh...");
 });
 
-dialog.matches(/.*?th(x|ank).*?/i, function(session){
+dialog.matches(/th(x|ank).*/i, function(session){
     session.send(welcomeMsg());
 });
 
