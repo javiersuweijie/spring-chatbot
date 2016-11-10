@@ -6,6 +6,7 @@ startup = function(bot, builder, asteroid) {
             function (session, results) {
                 if (results.response.entity === 'Yes') {
                     session.endDialog();
+                    session.userData.return = true;
                     session.beginDialog('/news');
                 } else if (results.response.entity === 'No') {
                     session.replaceDialog('/returning_user_nonews');

@@ -1,13 +1,14 @@
 startup = function(bot, builder, asteroid) {
     bot.dialog('/returning_user_nonews', [
         function (session, results) {
-            builder.Prompts.choice(session, "Ok. I also found some top-viewed companies. Want to have a look?", "Yes|No");
+            builder.Prompts.choice(session, "Ok. I also found some companies that might be interesting. Take a look?", "Yes|No");
             },
             function (session, results) {
                 if (results.response.entity === 'Yes') {
                     if (session.userData.type === 'investor') {
                     session.send("When you were away, 66% of the investors like you looked at these companies.")
                     session.send("Displaying them now.")
+                    session.userData.return = false;
                     asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter: {
                                         $or: [
                                             {name : 'GCoreLab Pte Ltd'},

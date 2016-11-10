@@ -5,7 +5,6 @@ startup = function(bot, builder, asteroid) {
                 if (args && args.industry) interest = args.industry;
                 else if (session.userData.interest) {
                     interest = session.userData.interest
-                    session.send("You stated interests in "+ interest);
                 }
                 if (interest) {
                     asteroid.call("getNews",{meteorId:session.userData.meteorId,filter:{sector: interest}})
@@ -15,15 +14,16 @@ startup = function(bot, builder, asteroid) {
                                 var article_s = count == 1 ? "article" : "articles"
                                 session.send("Found %s %s related to %s",data ,article_s, interest);
                                 if (count > 5)
-                                session.send("Showing you only 5 articles");
+                                session.send("Showing you the top 5 articles.");
                             }
                             else {
-                                session.send("Sorry I did not find any relevant articles");
+                                session.send("Sorry I did not find any relevant articles.");
                             }
-                            session.endDialog();
+                            if (session.userData.return) session.replaceDialog('/returning_user_nonews');
+                            else session.endDialog();
                         })
                         .catch(function(data) {
-                            session.send("Opps. Something is not right");
+                            session.send("Opps. Something is not right here.");
                             session.endDialog();
                         });
                 }
@@ -39,7 +39,8 @@ startup = function(bot, builder, asteroid) {
                         if (count) {
                             var article_s = count == 1 ? "article" : "articles"
                             session.send("Found %s %s related to %s",data ,article_s, interest);
-                            session.send("Showing you only 3 articles");
+                            if (count > 5)
+                            session.send("Showing you the top 5 articles.");
                         }
                         else {
                             session.send("Sorry I did not find any relevant articles");
@@ -47,7 +48,7 @@ startup = function(bot, builder, asteroid) {
                         session.endDialog();
                     })
                     .catch(function(data) {
-                        session.send("Opps. Something is not right");
+                        session.send("Opps. Something is not right.");
                         session.endDialog();
                     });
             }
