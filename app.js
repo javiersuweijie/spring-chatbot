@@ -133,7 +133,7 @@ dialog.matches('find_investees', [
                                         sector: industry,
                                         year_i: yearIncorp,
                                         country: location,
-                                        'b2b/b2c/both': businessType,
+                                        b2_: businessType,
                                         funding: fundingStage}})
                     .then(function(result){
                         var count = parseInt(result);                        
