@@ -6,17 +6,22 @@ startup = function(bot, builder, asteroid) {
                 else if (session.userData.interest) interest = session.userData.interest
                 if (interest) {
                     session.send("You stated interests in "+ interest);
-                    session.send("Here are the latest news for that sector");
-                    asteroid.call("getNews",{sector: interest})
+                    asteroid.call("getNews",{meteorId:session.userData.meteorId,filter:{sector: interest}})
                         .then(function(data) {
-                            for (var i in data) {
-                                news = data[i];
-                                session.send(news.title+"\n"+news.url);
-                                session.endDialog();
+                            var count = parseInt(data);
+                            if (count) {
+                                var article_s = count == 1 ? "article" : "articles"
+                                session.send("Found %s %s related to %s",data ,article_s, interest);
+                                session.send("Showing you only 3 articles");
                             }
+                            else {
+                                session.send("Sorry I did not find any relevant articles");
+                            }
+                            session.endDialog();
                         })
                         .catch(function(data) {
                             session.send("Opps. Something is not right");
+                            session.endDialog();
                         });
                 }
                 else {
@@ -25,17 +30,22 @@ startup = function(bot, builder, asteroid) {
             },
             function (session, results) {
                 var interest = results.response.entity;
-                session.send("Here are the latest news for that sector");
-                asteroid.call("getNews",{sector: interest})
+                asteroid.call("getNews",{meteorId:session.userData.meteorId,filter:{sector: interest}})
                     .then(function(data) {
-                        for (var i in data) {
-                            news = data[i];
-                            session.send(news.title+"\n"+news.url);
-                            session.endDialog();
+                        var count = parseInt(data);
+                        if (count) {
+                            var article_s = count == 1 ? "article" : "articles"
+                            session.send("Found %s %s related to %s",data ,article_s, interest);
+                            session.send("Showing you only 3 articles");
                         }
+                        else {
+                            session.send("Sorry I did not find any relevant articles");
+                        }
+                        session.endDialog();
                     })
                     .catch(function(data) {
                         session.send("Opps. Something is not right");
+                        session.endDialog();
                     });
             }
     ]);

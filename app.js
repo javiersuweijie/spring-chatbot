@@ -135,8 +135,16 @@ dialog.matches('find_investees', [
                                         country: location,
                                         'b2b/b2c/both': businessType,
                                         funding: fundingStage}})
-                    .catch(function(error){console.log(error)});
-                session.send("Done. Displaying requested companies.");
+                    .then(function(result){
+                        var count = parseInt(result);                        
+                        var company_s = count==1 ? "company" : "companies";
+                        if (count) session.send("I found %s %s",result, company_s);
+                        else session.send("I did not find any companies that you were looking for.");
+                    })
+                    .catch(function(error) {
+                        console.log(error);
+                        session.send("Bugs and more bugs. They never end do they?"); 
+                    });
                 session.endDialog();
             }
         }
