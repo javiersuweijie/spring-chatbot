@@ -191,11 +191,7 @@ dialog.matches(/.*?(problem|solve).*/, function(session){
     session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
-dialog.matches(/.*?improve.*(lives|citizens).*/, function(session){
-    session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
-});
-
-dialog.matches(/.*?impact.*users.*/, function(session){
+dialog.matches(/.*?(improve|impact).*(life|lives|citizen|user).*/, function(session){
     session.send("Hi, I'm Olivia. I am passionate about connecting start-ups and investors. I can also share the latest startup news and insights. I'm always learning new things to make your busy life better :)");
 });
 
