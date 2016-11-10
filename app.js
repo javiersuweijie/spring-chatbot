@@ -48,45 +48,13 @@ require('./news_dialog')(bot, builder, asteroid);
 require('./find_investees')(bot, builder, asteroid);
 require('./returning_user')(bot, builder, asteroid);
 require('./returning_user_nonews')(bot, builder, asteroid);
+require('./debug_commands')(bot, builder, asteroid, dialog);
 
 const greetingMsg = require('./greeting');
 const welcomeMsg = require('./welcome');
 const thanksMsg = require('./thanks');
 const investeeSearch = require('./investee_search');
 
-// dialogs to check backend
-
-dialog.matches(/\/login_info/, function(session) {
-    console.log(session.userData);
-    if (session.userData.meteorId) {
-        session.send("You user id is " + session.userData.meteorId);
-    }
-    else {
-        session.send("You are not logged in.")
-    }
-});
-
-dialog.matches(/\/login_set/, function(session) {
-    match = session.message.text.match("\/login_set (.+)");
-    session.userData.meteorId = match[1];
-    console.log(session.userData);
-    session.send("Updated login information");
-});
-
-dialog.matches(/\/login_reset/, function(session) {
-    session.userData = {};
-    session.send("Cleared login information");
-});
-
-dialog.matches(/\/filter_sector/, function(session) {
-    match = session.message.text.match("\/filter_sector (.+)");
-    asteroid.call('setFilter', {meteorId:session.userData.meteorId, filter:{sector: match[1]}});
-    session.send("filtered sector to %s", match[1]);
-});
-
-dialog.matches(/\/show_news/, function(session) {
-    session.beginDialog('/news');
-});
 
 dialog.matches(/what am i\?/i, function(session){
     session.send("%s",session.userData.type);
@@ -105,14 +73,15 @@ dialog.matches('find_industry', function(session, args) {
 
 });
 
-dialog.matches(/.*?news.*?/i, function(session) {
-    session.beginDialog('/news');
-});
+//dialog.matches(/.*?news.*?/i, function(session) {
+//    session.beginDialog('/news');
+//});
 
 // main bot dialogs
 
-dialog.matches('news', function(session) {
-    session.beginDialog('/news');
+dialog.matches('news', function(session, args) {
+    var industry = builder.EntityRecognizer.findEntity(args.entities, 'start-up_industry');
+    session.beginDialog('/news',{industry: industry.entity});
 });
 
 dialog.matches('hello', function(session) {
