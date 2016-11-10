@@ -6,17 +6,14 @@ startup = function(bot, builder, asteroid) {
             },
             function (session, results) {
                 session.userData.name= results.response;
-                builder.Prompts.choice(session, "Okay "+session.userData.name+", which of the following are you?", "investor|startup|others");
+                builder.Prompts.choice(session, "Okay "+session.userData.name+", which of the following are you?", "investor|startup");
             },
             function (session, results, next) {
-                if (results.response) {
-                    session.userData.type = results.response.entity;
-                    session.send("So you %s huh?", session.userData.type);
-                }
-                else {
-                    session.send("Which sector are you interested in?");
-                    builder.Prompts.choice(session, "Right now, we only have data for the following sectors:", "fintech|cleantech|ict");
-                }
+                session.userData.type = results.response.entity;
+                var a = session.userData.type=="investor" ? 'an' : 'a';
+                session.send("So you are %s %s huh?", a, session.userData.type);
+                session.send("Which sector are you interested in?");
+                builder.Prompts.choice(session, "Right now, we only have data for the following sectors:", "fintech|cleantech|ict");
             },
             function (session, results, next) {
                 console.log(results.response);
