@@ -48,6 +48,7 @@ require('./news_dialog')(bot, builder, asteroid);
 require('./returning_user')(bot, builder, asteroid);
 require('./returning_user_nonews')(bot, builder, asteroid);
 require('./debug_commands')(bot, builder, asteroid, dialog);
+require('./change_userdata')(bot, builder, asteroid);
 
 const greetingMsg = require('./greeting');
 const welcomeMsg = require('./welcome');
@@ -64,6 +65,10 @@ dialog.matches('find_industry', function(session, args) {
     session.userData.sector = industry.entity;
     session.send("Searching for %s", industry.entity);
 
+});
+
+dialog.matches(/.*?change.*?/, function(session) {
+    session.beginDialog('/change_userdata');
 });
 
 // main bot dialogs
