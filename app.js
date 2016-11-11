@@ -75,6 +75,9 @@ dialog.matches(/.*?change.*?/, function(session) {
 
 dialog.matches('news', function(session, args) {
     var industry = builder.EntityRecognizer.findEntity(args.entities, 'start-up_industry');
+    if (!industry) {
+        industry = session.userData.type;
+    }
     session.beginDialog('/news',{industry: industry.entity});
 });
 

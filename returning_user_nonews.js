@@ -38,6 +38,7 @@ startup = function(bot, builder, asteroid) {
                     } else {
                         session.send("Ok. What would you like to find out today? (e.g. You can ask 'what's new in the market?' or 'who can I get Series A funding from?)'");
                     }
+                    session.userData.return = false;
                     session.endDialog();
                 } else {
                     console.log(results);
